@@ -59,7 +59,7 @@ class ito_booking_form_tour_widget extends WP_Widget
     public function __construct()
     {
         parent::__construct(false, 'ITO Form: Tour',
-            array('description' => 'Tour Booking Form in PORTRAIT mode.'));
+            array('description' => 'Tour Booking Form in portrait and landscape mode.'));
     }
 
 
