@@ -26,6 +26,12 @@ class ito_booking_form_fastboat_widget extends WP_Widget
         $bank_data = isset($instance['bank_data']) ? $instance['bank_data'] : Helpers::path_bank_data;
         $form_title = isset($instance['form_title']) ? $instance['form_title'] : Helpers::form_fb_title;
         $form_mode = isset($instance['form_mode']) ? $instance['form_mode'] : Helpers::form_mode_portrait;
+        $default_currency = isset($instance['default_currency']) ? $instance['default_currency'] : Helpers::default_currency;
+        $default_fb_departure = isset($instance['default_fb_departure']) ? $instance['default_fb_departure'] : Helpers::default_fb_departure;
+        $default_fb_arrival = isset($instance['default_fb_arrival']) ? $instance['default_fb_arrival'] : Helpers::default_fb_arrival;
+        $fb_max_adult = isset($instance['fb_max_adult']) ? $instance['fb_max_adult'] : Helpers::fb_max_adult;
+        $fb_max_child = isset($instance['fb_max_child']) ? $instance['fb_max_child'] : Helpers::fb_max_child;
+        $fb_max_infant = isset($instance['fb_max_infant']) ? $instance['fb_max_infant'] : Helpers::fb_max_infant;
         echo '
         <p>Bank Data:&nbsp;
             <input type="text" class="widefat" name="' . $this->get_field_name('bank_data') . '" value="' . $bank_data . '"></p>
@@ -36,16 +42,28 @@ class ito_booking_form_fastboat_widget extends WP_Widget
                 <option value="' . Helpers::form_mode_portrait . '" ' . ($form_mode == Helpers::form_mode_portrait ? 'selected' : '') . '>Portrait</option>
                 <option value="' . Helpers::form_mode_landscape . '" ' . ($form_mode == Helpers::form_mode_landscape ? 'selected' : '') . '>Landscape</option>
             </select></p>
+        <h3>Defaults</h3>
+        <p>Currency ID: <input type="number" class="tiny-text" name="' . $this->get_field_name('default_currency') . '" value="' . $default_currency . '"></p>
+        <p>Departure ID: <input type="number" class="tiny-text" name="' . $this->get_field_name('default_fb_departure') . '" value="' . $default_fb_departure . '"></p>
+        <p>Arrival ID: <input type="number" class="tiny-text" name="' . $this->get_field_name('default_fb_arrival') . '" value="' . $default_fb_arrival . '"></p>
+        <p>Max Adult: <input type="number" class="tiny-text" name="' . $this->get_field_name('fb_max_adult') . '" value="' . $fb_max_adult . '"></p>
+        <p>Max Child: <input type="number" class="tiny-text" name="' . $this->get_field_name('fb_max_child') . '" value="' . $fb_max_child . '"></p>
+        <p>Max Infant: <input type="number" class="tiny-text" name="' . $this->get_field_name('fb_max_infant') . '" value="' . $fb_max_infant . '"></p>
         ';
     }
 
     public function update($new_instance, $old_instance)
     {
-        add_option(Helpers::plugin_slug . '_fb_bank_data', $new_instance['bank_data']);
         return array(
             'bank_data' => $new_instance['bank_data'],
             'form_title' => $new_instance['form_title'],
-            'form_mode' => $new_instance['form_mode']
+            'form_mode' => $new_instance['form_mode'],
+            'default_currency' => $new_instance['default_currency'],
+            'default_fb_departure' => $new_instance['default_fb_departure'],
+            'default_fb_arrival' => $new_instance['default_fb_arrival'],
+            'fb_max_adult' => $new_instance['fb_max_adult'],
+            'fb_max_child' => $new_instance['fb_max_child'],
+            'fb_max_infant' => $new_instance['fb_max_infant']
         );
     }
 }

@@ -50,7 +50,13 @@ class ITO_Booking_Form
         $_args = $this->sync_args(array(
             'bank_data' => Helpers::path_bank_data,
             'form_title' => Helpers::form_fb_title,
-            'form_mode' => Helpers::form_mode_portrait
+            'form_mode' => Helpers::form_mode_portrait,
+            'default_currency' => Helpers::default_currency,
+            'default_fb_departure' => Helpers::default_fb_departure,
+            'default_fb_arrival' => Helpers::default_fb_arrival,
+            'fb_max_adult' => Helpers::fb_max_adult,
+            'fb_max_child' => Helpers::fb_max_child,
+            'fb_max_infant' => Helpers::fb_max_infant
         ), $args);
 
         if (empty($this->currency_lists))
@@ -61,11 +67,14 @@ class ITO_Booking_Form
 
         $_currency_options = '';
         foreach ($this->currency_lists as $_currency)
-            $_currency_options .= '<option value="' . $_currency->currency_id . '">' . $_currency->currency_name . ' (' . $_currency->currency_code . ')</option>';
+            $_currency_options .= '<option value="' . $_currency->currency_id . '" ' . ($_args['default_currency'] == $_currency->currency_id ? 'selected' : '') . '>' . $_currency->currency_name . ' (' . $_currency->currency_code . ')</option>';
 
-        $_region_options = '';
-        foreach ($this->fb_region_lists as $_region)
-            $_region_options .= '<option value="' . $_region->region_id . '">' . $_region->region_name . '</option>';
+        $_departure_region_options = '';
+        $_arrival_region_options = '';
+        foreach ($this->fb_region_lists as $_region) {
+            $_departure_region_options .= '<option value="' . $_region->region_id . '" ' . ($_args['default_fb_departure'] == $_region->region_id ? 'selected' : '') . '>' . $_region->region_name . '</option>';
+            $_arrival_region_options .= '<option value="' . $_region->region_id . '" ' . ($_args['default_fb_arrival'] == $_region->region_id ? 'selected' : '') . '>' . $_region->region_name . '</option>';
+        }
 
         $_is_landscape = $_args['form_mode'] == Helpers::form_mode_landscape;
 
@@ -82,13 +91,13 @@ class ITO_Booking_Form
                             <div class="fb-depart-region">
                                 <label class="lrs-form inline" for="departure_region_id">Departure</label>
                                 <select class="lrs-form expand" id="departure_region_id" name="departure_region_id">
-                                    ' . $_region_options . '
+                                    ' . $_departure_region_options . '
                                 </select>
                             </div>
                             <div class="fb-arrival-region">
                                 <label class="lrs-form inline" for="arrival_region_id">Arrival</label>
                                 <select class="lrs-form expand" id="arrival_region_id" name="arrival_region_id">
-                                    ' . $_region_options . '
+                                    ' . $_arrival_region_options . '
                                 </select>
                             </div>
                         </div>
@@ -116,15 +125,15 @@ class ITO_Booking_Form
                         <div class="fb-passengers lrs-row">
                             <div class="fb-adult lrs-col-sm-4">
                                 <label for="number_of_adult">Adult</label>
-                                <input type="number" class="lrs-form expand" id="number_of_adult" name="number_of_adult" min="1" value="1" />
+                                <input type="number" class="lrs-form expand" id="number_of_adult" name="number_of_adult" min="1" value="1" max="' . $_args['fb_max_adult'] . '" />
                             </div>
                             <div class="fb-child lrs-col-sm-4">
                                 <label for="number_of_child">Child</label>
-                                <input type="number" class="lrs-form expand" id="number_of_child" name="number_of_child" min="0" value="0" />
+                                <input type="number" class="lrs-form expand" id="number_of_child" name="number_of_child" min="0" value="0" max="' . $_args['fb_max_child'] . '" />
                             </div>
                             <div class="fb-infant lrs-col-sm-4">
                                 <label for="number_of_infant">Infant</label>
-                                <input type="number" class="lrs-form expand" id="number_of_infant" name="number_of_infant" min="0" value="0" />
+                                <input type="number" class="lrs-form expand" id="number_of_infant" name="number_of_infant" min="0" value="0" max="' . $_args['fb_max_infant'] . '" />
                             </div>
                         </div>
                     </div>
