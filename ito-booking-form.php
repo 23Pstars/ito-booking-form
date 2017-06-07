@@ -18,6 +18,8 @@ class ITO_Booking_Form
 
     private $currency_lists = array();
     private $fb_region_lists = array();
+    private $tr_city_lists = array();
+    private $tr_activity_lists = array();
 
     public function __construct()
     {
@@ -44,6 +46,91 @@ class ITO_Booking_Form
             $bank_data . DS . Helpers::path_fastboat . DS . Helpers::path_api . DS . 'regions?number=-1'));
     }
 
+    public function fetch_tr_city_lists($bank_data)
+    {
+        $_city_lists = array();
+        $this->tr_city_lists = json_decode(file_get_contents(
+            $bank_data . DS . Helpers::path_tour . DS . Helpers::path_api . DS . 'cities?number=-1'));
+        foreach ($this->tr_city_lists as $_city)
+            in_array($_city->nationality_title, $_city_lists) || $_city_lists[$_city->nationality_title][] = $_city;
+        $this->tr_city_lists = $_city_lists;
+    }
+
+    public function fetch_tr_activity_lists($bank_data)
+    {
+        $this->tr_activity_lists = json_decode(file_get_contents(
+            $bank_data . DS . Helpers::path_tour . DS . Helpers::path_api . DS . 'activities?number=-1'));
+    }
+
+    public function get_booking_form_tour($args = array())
+    {
+        $_args = $this->sync_args(array(
+            'bank_data' => Helpers::path_bank_data,
+            'form_title' => Helpers::form_tr_title,
+            'form_mode' => Helpers::form_mode_portrait,
+            'default_tr_city' => Helpers::default_tr_city,
+            'default_tr_category' => Helpers::default_tr_category,
+        ), $args);
+
+        if (empty($this->tr_activity_lists))
+            $this->fetch_tr_activity_lists($_args['bank_data']);
+
+        if (empty($this->tr_city_lists))
+            $this->fetch_tr_city_lists($_args['bank_data']);
+
+        $_city_options = '';
+        foreach ($this->tr_city_lists as $_nationality => $_cities) :
+            $_city_options .= '<optgroup label="' . $_nationality . '">' . $_nationality . '</optgroup>';
+            foreach ($_cities as $_city)
+                $_city_options .= '<option value="' . $_city->city_id . '"' . ($_args['default_tr_city'] == $_city->city_id ? 'selected' : '') . '>' . $_city->city_title . '</option>';
+        endforeach;
+
+        $_activity_options = '';
+        foreach ($this->tr_activity_lists as $_activity)
+            $_activity_options .= '<option value="' . $_activity->category_id . '"' . ($_args['default_tr_category'] == $_activity->category_id ? 'selected' : '') . '>' . $_activity->category_title . '</option>';
+
+        $_is_landscape = $_args['form_mode'] == Helpers::form_mode_landscape;
+
+        $html = '
+            <div class="tr-container">
+                <h3 class="tr-title">' . $_args['form_title'] . '</h3>
+                <form action="' . $_args['bank_data'] . '/tour/packages" method="get">
+                    <div class="lrs-row">
+                        <div class="lrs-col-sm-' . ($_is_landscape ? 3 : 12) . ' tr-cities">
+                            <label class="lrs-form">Destination</label>
+                            <select class="lrs-form expand" name="city_id">
+                                <option value="-1">All Cities</option>
+                                ' . $_city_options . '
+                            </select>
+                        </div>
+                        <div class="lrs-col-sm-' . ($_is_landscape ? 3 : 12) . ' tr-activities">
+                            <label class="lrs-form">Activities</label>
+                            <select class="lrs-form expand" name="category_id">
+                                <option value="-1">All Activities</option>
+                                ' . $_activity_options . '
+                            </select>
+                        </div>
+                        <div class="lrs-col-sm-' . ($_is_landscape ? 3 : 12) . ' tr-keywords">
+                            <label class="lrs-form">Keywords</label>
+                            <input type="text" class="lrs-form expand" name="keyword" placeholder="eg. Hotels, Places, etc." />
+                        </div>
+                        <div class="lrs-col-sm-' . ($_is_landscape ? 3 : 12) . ' tr-button">
+                            <div class="lrs-row">
+                                <div class="lrs-col-sm-12 lrs-col-lg-6">
+                                    ' . ($_is_landscape ? '<label class="lrs-form">&nbsp;</label>' : '') . '
+                                    <button class="lrs-btn lrs-btn-primary expand">
+                                        Search &raquo;
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        ';
+        return $html;
+    }
+
     public function get_booking_form_fastboat($args = array())
     {
 
@@ -56,7 +143,8 @@ class ITO_Booking_Form
             'default_fb_arrival' => Helpers::default_fb_arrival,
             'fb_max_adult' => Helpers::fb_max_adult,
             'fb_max_child' => Helpers::fb_max_child,
-            'fb_max_infant' => Helpers::fb_max_infant
+            'fb_max_infant' => Helpers::fb_max_infant,
+            'fb_show_notes' => ''
         ), $args);
 
         if (empty($this->currency_lists))
@@ -77,6 +165,12 @@ class ITO_Booking_Form
         }
 
         $_is_landscape = $_args['form_mode'] == Helpers::form_mode_landscape;
+
+        $_fb_notes = $_args['fb_show_notes'] == 'on' ? '
+        <div class="fb-note">
+            <span>Note: </span>this trip is not recommended for Pregnant Women, People with Heart or Back problems, and other physical impediments.                        
+        </div>
+        ' : '';
 
         $html = '
             <div class="fb-container">
@@ -146,10 +240,6 @@ class ITO_Booking_Form
                             </select>
                         </div>
                         
-                        <div class="fb-note">
-                            <span>Note: </span>this trip is not recommended for Pregnant Women, People with Heart or Back problems, and other physical impediments.                        
-                        </div>
-                        
                         <div class="lrs-row">
                             <div class="fb-button lrs-col-sm-4">
                                 <button class="lrs-btn lrs-btn-primary expand">
@@ -160,6 +250,8 @@ class ITO_Booking_Form
                                 <a href="' . $_args['bank_data'] . DS . Helpers::path_fastboat . '/e-ticket"><strong>Lost your e-Ticket?</strong></a>
                             </div>
                         </div>
+                        
+                        ' . $_fb_notes . '
             
                         <input type="hidden" id="fb_route_type" name="route_type" value="return" />
                     </div>

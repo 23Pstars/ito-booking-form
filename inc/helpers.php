@@ -27,6 +27,12 @@ class Helpers
     const fb_max_child = 7;
     const fb_max_infant = 5;
 
+    // tour
+    const form_tr_title = 'Activities';
+    const path_tour = 'tour';
+    const default_tr_city = -1;
+    const default_tr_category = -1;
+
     const form_mode_portrait = 'portrait';
     const form_mode_landscape = 'landscape';
 }
