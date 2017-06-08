@@ -33,6 +33,12 @@ class Helpers
     const default_tr_city = -1;
     const default_tr_category = -1;
 
+    // flight
+    const form_fl_title = 'Flights';
+    const path_flight = 'flight';
+    const default_fl_departure = 'LOP';
+    const default_fl_arrival = 'DPS';
+
     const form_mode_portrait = 'portrait';
     const form_mode_landscape = 'landscape';
 }

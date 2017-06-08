@@ -4,4 +4,4 @@ Booking form as WordPress widget for fastboat, tour, and flight from [Indo Trave
 
 - [x] Fastboat
 - [x] Tour
-- [ ] Flight
+- [x] Flight

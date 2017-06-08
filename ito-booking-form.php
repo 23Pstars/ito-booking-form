@@ -20,6 +20,7 @@ class ITO_Booking_Form
     private $fb_region_lists = array();
     private $tr_city_lists = array();
     private $tr_activity_lists = array();
+    private $fl_airport_lists = array();
 
     public function __construct()
     {
@@ -60,6 +61,127 @@ class ITO_Booking_Form
     {
         $this->tr_activity_lists = json_decode(file_get_contents(
             $bank_data . DS . Helpers::path_tour . DS . Helpers::path_api . DS . 'activities?number=-1'));
+    }
+
+    public function fetch_fl_airport_lists($bank_data)
+    {
+        $this->fl_airport_lists = json_decode(file_get_contents(
+            $bank_data . DS . Helpers::path_flight . DS . Helpers::path_api . DS . 'airports?number=-1'));
+    }
+
+    public function get_booking_form_flight($args = array())
+    {
+
+        $_args = $this->sync_args(array(
+            'bank_data' => Helpers::path_bank_data,
+            'form_title' => Helpers::form_fl_title,
+            'form_mode' => Helpers::form_mode_portrait,
+            'default_currency' => Helpers::default_currency,
+            'default_fl_departure' => Helpers::default_fl_departure,
+            'default_fl_arrival' => Helpers::default_fl_arrival,
+            'fb_max_adult' => Helpers::fb_max_adult,
+            'fb_max_child' => Helpers::fb_max_child
+        ), $args);
+
+        if (empty($this->currency_lists))
+            $this->fetch_currency_lists($_args['bank_data']);
+
+        if (empty($this->fl_airport_lists))
+            $this->fetch_fl_airport_lists($_args['bank_data']);
+
+        $_currency_options = '';
+        foreach ($this->currency_lists as $_currency)
+            $_currency_options .= '<option value="' . $_currency->currency_id . '" ' . ($_args['default_currency'] == $_currency->currency_id ? 'selected' : '') . '>' . $_currency->currency_name . ' (' . $_currency->currency_code . ')</option>';
+
+        $_departure_region_options = '';
+        $_arrival_region_options = '';
+        foreach ($this->fl_airport_lists as $_airport) {
+            $_departure_region_options .= '<option value="' . $_airport->airport_code . '" ' . ($_args['default_fl_departure'] == $_airport->airport_code ? 'selected' : '') . '>' . $_airport->city_name . ' (' . $_airport->airport_code . ')</option>';
+            $_arrival_region_options .= '<option value="' . $_airport->airport_code . '" ' . ($_args['default_fl_arrival'] == $_airport->airport_code ? 'selected' : '') . '>' . $_airport->city_name . ' (' . $_airport->airport_code . ')</option>';
+        }
+
+        $_is_landscape = $_args['form_mode'] == Helpers::form_mode_landscape;
+
+        $html = '
+            <div class="fl-container">
+                
+                <h3 class="fl-title">' . $_args['form_title'] . '</h3>
+            
+                <form action="' . $_args['bank_data'] . DS . Helpers::path_flight . '/select-flight" method="get">
+                
+                <div class="lrs-row">
+                    <div class="lrs-col-sm-12 lrs-col-lg-' . ($_is_landscape ? 4 : 12) . '">
+                        <div class="fl-routes">
+                            <div class="fl-depart-region">
+                                <label class="lrs-form inline" for="departure_code">Departure</label>
+                                <select class="lrs-form expand" id="departure_code" name="departure_code">
+                                    ' . $_departure_region_options . '
+                                </select>
+                            </div>
+                            <div class="fl-arrival-region">
+                                <label class="lrs-form inline" for="arrival_code">Arrival</label>
+                                <select class="lrs-form expand" id="arrival_code" name="arrival_code">
+                                    ' . $_arrival_region_options . '
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lrs-col-sm-12 lrs-col-lg-' . ($_is_landscape ? 4 : 12) . '">
+                        <div class="fl-dates">
+                            <div class="lrs-row">
+                                <div class="fl-depart-date lrs-col-sm-6">
+                                <label for="departure_date">Depart</label>
+                                    <input type="text" class="lrs-form expand" id="fl_departure_date" name="outbound_date"
+                                           value="' . date('Y-m-d', mktime(0, 0, 0, date("m"), date("d") + 1, date("Y"))) . '"/>
+                                </div>
+                                <div class="fl-arrival-date lrs-col-sm-6">
+                                    <label for="toggle_return">
+                                        <input id="toggle_return" type="checkbox" checked />
+                                        Return?
+                                    </label>
+                                    <div id="return_date_container">
+                                        <input type="text" class="lrs-form expand" id="fl_return_date" name="inbound_date"
+                                               value="' . date('Y-m-d', mktime(0, 0, 0, date("m"), date("d") + 2, date("Y"))) . '"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fl-passengers lrs-row">
+                            <div class="fl-adult lrs-col-sm-6">
+                                <label for="adults_count">Adult</label>
+                                <input type="number" class="lrs-form expand" id="adults_count" name="adults_count" min="1" value="1" max="' . $_args['fb_max_adult'] . '" />
+                            </div>
+                            <div class="fl-child lrs-col-sm-6">
+                                <label for="children_count">Child</label>
+                                <input type="number" class="lrs-form expand" id="children_count" name="children_count" min="0" value="0" max="' . $_args['fb_max_child'] . '" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lrs-col-sm-12 lrs-col-lg-' . ($_is_landscape ? 4 : 12) . '">
+                        
+                        <div class="fl-currencies">
+                            <label for="currency_code">Preferred Currency</label>
+                            <select class="lrs-form expand" id="currency_code" name="currency_code">
+                                ' . $_currency_options . '
+                            </select>
+                        </div>
+                        
+                        <div class="lrs-row">
+                            <div class="fl-button lrs-col-sm-12 lrs-col-lg-6">
+                                <button class="lrs-btn lrs-btn-primary expand">
+                                    Search &raquo;
+                                </button>                        
+                            </div>
+                        </div>
+            
+                        <input type="hidden" id="fl_route_type" name="route_type" value="return" />
+                    </div>
+                </div>
+        
+                </form>
+            </div>';
+        return $html;
+
     }
 
     public function get_booking_form_tour($args = array())
@@ -201,7 +323,7 @@ class ITO_Booking_Form
                             <div class="lrs-row">
                                 <div class="fb-depart-date lrs-col-sm-6">
                                 <label for="departure_date">Depart</label>
-                                    <input type="text" class="lrs-form expand" id="departure_date" name="departure_transfer_date"
+                                    <input type="text" class="lrs-form expand" id="fb_departure_date" name="departure_transfer_date"
                                            value="' . date('Y-m-d', mktime(0, 0, 0, date("m"), date("d") + 1, date("Y"))) . '"/>
                                 </div>
                                 <div class="fb-arrival-date lrs-col-sm-6">
@@ -210,7 +332,7 @@ class ITO_Booking_Form
                                         Return?
                                     </label>
                                     <div id="return_date_container">
-                                        <input type="text" class="lrs-form expand" id="return_date" name="return_transfer_date"
+                                        <input type="text" class="lrs-form expand" id="fb_return_date" name="return_transfer_date"
                                                value="' . date('Y-m-d', mktime(0, 0, 0, date("m"), date("d") + 2, date("Y"))) . '"/>
                                     </div>
                                 </div>
@@ -241,12 +363,12 @@ class ITO_Booking_Form
                         </div>
                         
                         <div class="lrs-row">
-                            <div class="fb-button lrs-col-sm-4">
+                            <div class="fb-button lrs-col-sm-12 lrs-col-md-12 lrs-col-lg-5">
                                 <button class="lrs-btn lrs-btn-primary expand">
                                     Search &raquo;
                                 </button>                        
                             </div>
-                            <div class="fb-lost-eticket lrs-col-sm-8">
+                            <div class="fb-lost-eticket lrs-col-sm-12 lrs-col-md-12 lrs-col-lg-7">
                                 <a href="' . $_args['bank_data'] . DS . Helpers::path_fastboat . '/e-ticket"><strong>Lost your e-Ticket?</strong></a>
                             </div>
                         </div>
