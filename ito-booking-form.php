@@ -72,16 +72,7 @@ class ITO_Booking_Form
     public function get_booking_form_flight($args = array())
     {
 
-        $_args = $this->sync_args(array(
-            'bank_data' => Helpers::path_bank_data,
-            'form_title' => Helpers::form_fl_title,
-            'form_mode' => Helpers::form_mode_portrait,
-            'default_currency' => Helpers::default_currency,
-            'default_fl_departure' => Helpers::default_fl_departure,
-            'default_fl_arrival' => Helpers::default_fl_arrival,
-            'fb_max_adult' => Helpers::fb_max_adult,
-            'fb_max_child' => Helpers::fb_max_child
-        ), $args);
+        $_args = $this->sync_args(Helpers::$default_fl_args, $args);
 
         if (empty($this->currency_lists))
             $this->fetch_currency_lists($_args['bank_data']);
@@ -186,13 +177,7 @@ class ITO_Booking_Form
 
     public function get_booking_form_tour($args = array())
     {
-        $_args = $this->sync_args(array(
-            'bank_data' => Helpers::path_bank_data,
-            'form_title' => Helpers::form_tr_title,
-            'form_mode' => Helpers::form_mode_portrait,
-            'default_tr_city' => Helpers::default_tr_city,
-            'default_tr_category' => Helpers::default_tr_category,
-        ), $args);
+        $_args = $this->sync_args(Helpers::$default_tr_args, $args);
 
         if (empty($this->tr_activity_lists))
             $this->fetch_tr_activity_lists($_args['bank_data']);
@@ -256,18 +241,7 @@ class ITO_Booking_Form
     public function get_booking_form_fastboat($args = array())
     {
 
-        $_args = $this->sync_args(array(
-            'bank_data' => Helpers::path_bank_data,
-            'form_title' => Helpers::form_fb_title,
-            'form_mode' => Helpers::form_mode_portrait,
-            'default_currency' => Helpers::default_currency,
-            'default_fb_departure' => Helpers::default_fb_departure,
-            'default_fb_arrival' => Helpers::default_fb_arrival,
-            'fb_max_adult' => Helpers::fb_max_adult,
-            'fb_max_child' => Helpers::fb_max_child,
-            'fb_max_infant' => Helpers::fb_max_infant,
-            'fb_show_notes' => ''
-        ), $args);
+        $_args = $this->sync_args(Helpers::$default_fb_args, $args);
 
         if (empty($this->currency_lists))
             $this->fetch_currency_lists($_args['bank_data']);
