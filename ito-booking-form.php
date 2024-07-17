@@ -5,7 +5,7 @@
  * Description:     Booking form as WordPress widget for fastboat, tour, and flight from <a href="http://www.indotravelonline.com">Indo Travel Online</a>.
  * Version:         1.0.0
  * Author:          Zaf
- * Author URI:      http://lrsoft.co.id
+ * Author URI:      https://zaf.web.id
  */
 
 define('DS', DIRECTORY_SEPARATOR);

@@ -2,7 +2,7 @@
 
 /**
  * LRsoft Corp.
- * http://lrsoft.co.id
+ * https://lrsoft.id
  *
  * Author : Zaf
  */
