@@ -37,13 +37,13 @@ class ITO_Booking_Form
 
     public function fetch_currency_lists($bank_data)
     {
-        $this->currency_lists = json_decode($bank_data == '-' ? file_get_contents(
+        $this->currency_lists = json_decode($bank_data != '-' ? file_get_contents(
             $bank_data . DS . Helpers::path_currency . DS . Helpers::path_api . DS . 'rates?number=-1') : Helpers::$_lists_currencies);
     }
 
     public function fetch_fb_region_lists($bank_data)
     {
-        $this->fb_region_lists = json_decode($bank_data == '-' ? file_get_contents(
+        $this->fb_region_lists = json_decode($bank_data != '-' ? file_get_contents(
             $bank_data . DS . Helpers::path_fastboat . DS . Helpers::path_api . DS . 'regions?number=-1') : Helpers::$_lists_regions);
     }
 
