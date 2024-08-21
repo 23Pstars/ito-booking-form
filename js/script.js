@@ -1,15 +1,35 @@
-jQuery(document).ready(function($){
+jQuery(document).ready(function ($) {
+
+    // flatpickr("#fb_departure_date", {});
+    // flatpickr("#fb_return_date", {});
+    //
+    // $('.fb-arrival-date #toggle_return').change(function () {
+    //     if ($(this).is(':checked')) {
+    //         if ($(this).is(':checked')) $('.fb-arrival-date #return_date_container input').attr('disabled', false);
+    //         // startPicker.setEndRange(startDateFB);
+    //         // startPicker.setMaxDate(endDateFB);
+    //         $('#fb_route_type').val('return');
+    //         console.log('return');
+    //     } else {
+    //         $('.fb-arrival-date #return_date_container input').attr('disabled', true);
+    //         // startPicker.setEndRange(null);
+    //         // startPicker.setMaxDate(maxDate);
+    //         $('#fb_route_type').val('oneway');
+    //         console.log('oneway');
+    //     }
+    // });
+
     var maxDate = new Date();
-    maxDate.setYear( maxDate.getFullYear() + 20 );
+    maxDate.setYear(maxDate.getFullYear() + 20);
 
     var startDateFB,
         endDateFB,
-        updateStartDateFB = function() {
+        updateStartDateFB = function () {
             startPicker.setStartRange(startDateFB);
             endPicker.setStartRange(startDateFB);
             endPicker.setMinDate(startDateFB);
         },
-        updateEndDateFB = function() {
+        updateEndDateFB = function () {
             startPicker.setEndRange(endDateFB);
             endPicker.setEndRange(endDateFB);
         },
@@ -18,7 +38,7 @@ jQuery(document).ready(function($){
             format: 'Y-MM-DD',
             minDate: new Date(),
             maxDate: maxDate,
-            onSelect: function() {
+            onSelect: function () {
                 startDateFB = this.getDate();
                 updateStartDateFB();
             }
@@ -28,7 +48,7 @@ jQuery(document).ready(function($){
             format: 'Y-MM-DD',
             minDate: new Date(),
             maxDate: maxDate,
-            onSelect: function() {
+            onSelect: function () {
                 endDateFB = this.getDate();
                 updateEndDateFB();
             }
@@ -46,12 +66,12 @@ jQuery(document).ready(function($){
 
     var startDateFL,
         endDateFL,
-        updateStartDateFL = function() {
+        updateStartDateFL = function () {
             startPicker.setStartRange(startDateFL);
             endPicker.setStartRange(startDateFL);
             endPicker.setMinDate(startDateFL);
         },
-        updateEndDateFL = function() {
+        updateEndDateFL = function () {
             startPicker.setEndRange(endDateFL);
             endPicker.setEndRange(endDateFL);
         },
@@ -60,7 +80,7 @@ jQuery(document).ready(function($){
             format: 'Y-MM-DD',
             minDate: new Date(),
             maxDate: maxDate,
-            onSelect: function() {
+            onSelect: function () {
                 startDateFL = this.getDate();
                 updateStartDateFL();
             }
@@ -70,7 +90,7 @@ jQuery(document).ready(function($){
             format: 'Y-MM-DD',
             minDate: new Date(),
             maxDate: maxDate,
-            onSelect: function() {
+            onSelect: function () {
                 endDateFL = this.getDate();
                 updateEndDateFL();
             }
@@ -86,30 +106,28 @@ jQuery(document).ready(function($){
         updateEndDateFL();
     }
 
-
-
-    $('.fb-arrival-date #toggle_return').change(function(){
-        if( $(this).is(':checked') ) {
-            if( $(this).is(':checked') ) $('.fb-arrival-date #return_date_container input').attr('disabled',false);
+    $('.fb-arrival-date #toggle_return').change(function () {
+        if ($(this).is(':checked')) {
+            if ($(this).is(':checked')) $('.fb-arrival-date #return_date_container input').attr('disabled', false);
             startPicker.setEndRange(startDateFB);
             startPicker.setMaxDate(endDateFB);
             $('#fb_route_type').val('return');
         } else {
-            $('.fb-arrival-date #return_date_container input').attr('disabled',true);
+            $('.fb-arrival-date #return_date_container input').attr('disabled', true);
             startPicker.setEndRange(null);
             startPicker.setMaxDate(maxDate);
             $('#fb_route_type').val('oneway');
         }
     });
 
-    $('.fl-arrival-date #toggle_return').change(function(){
-        if( $(this).is(':checked') ) {
-            if( $(this).is(':checked') ) $('.fl-arrival-date #return_date_container input').attr('disabled',false);
+    $('.fl-arrival-date #toggle_return').change(function () {
+        if ($(this).is(':checked')) {
+            if ($(this).is(':checked')) $('.fl-arrival-date #return_date_container input').attr('disabled', false);
             startPicker.setEndRange(startDateFL);
             startPicker.setMaxDate(endDateFL);
             $('#fl_route_type').val('return');
         } else {
-            $('.fl-arrival-date #return_date_container input').attr('disabled',true);
+            $('.fl-arrival-date #return_date_container input').attr('disabled', true);
             startPicker.setEndRange(null);
             startPicker.setMaxDate(maxDate);
             $('#fl_route_type').val('oneway');

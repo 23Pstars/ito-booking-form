@@ -24,7 +24,7 @@ class ITO_Booking_Form
 
     public function __construct()
     {
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'), 50);
     }
 
     public function sync_args($default, $args)
@@ -363,10 +363,12 @@ class ITO_Booking_Form
     {
         wp_enqueue_script(Helpers::plugin_slug . '_moment', plugin_dir_url(__FILE__) . 'js/moment.js', '', '', true);
         wp_enqueue_script(Helpers::plugin_slug . '_pikaday', plugin_dir_url(__FILE__) . 'js/pikaday.js', '', '', true);
+//        wp_enqueue_script(Helpers::plugin_slug . '_flatpickr', plugin_dir_url(__FILE__) . 'js/flatpickr.min.js', '', '', true);
         wp_enqueue_script(Helpers::plugin_slug . '_script', plugin_dir_url(__FILE__) . 'js/script.js', '', '', true);
 
         wp_enqueue_style(Helpers::plugin_slug . '_lrs_css', plugin_dir_url(__FILE__) . 'css/lrs-css.min.css');
         wp_enqueue_style(Helpers::plugin_slug . '_pikaday', plugin_dir_url(__FILE__) . 'css/pikaday.css');
+//        wp_enqueue_style(Helpers::plugin_slug . '_flatpickr', plugin_dir_url(__FILE__) . 'css/flatpickr.min.css', '', '', true);
         wp_enqueue_style(Helpers::plugin_slug . '_style', plugin_dir_url(__FILE__) . 'css/style.min.css');
     }
 }
